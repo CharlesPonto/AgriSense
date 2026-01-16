@@ -103,7 +103,7 @@ export default function WeatherAlertsPage() {
   }, [filteredAlerts]);
 
   const uniqueRegions = useMemo(
-    () => ['All', ...new Set(weatherAlertsData.map((item) => item.region))],
+    () => [...new Set(['All', ...weatherAlertsData.map((item) => item.region)])],
     []
   );
 
