@@ -1,10 +1,10 @@
-import { Leaf, Droplets, Bug, Syringe } from 'lucide-react';
+import { Leaf, Droplets, Bug, Syringe, ClipboardList } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export type FarmLog = {
   id: string;
   date: string;
-  category: 'Crop Health' | 'Irrigation' | 'Pest Control' | 'Fertilization';
+  category: 'Crop Health' | 'Irrigation' | 'Pest Control' | 'Fertilization' | 'Harvest' | 'Other';
   notes: string;
   Icon: LucideIcon;
 };
