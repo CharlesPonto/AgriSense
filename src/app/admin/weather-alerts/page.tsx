@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { Badge, type BadgeProps } from '@/components/ui/badge';
 import {
   ChartContainer,
   ChartTooltip,
@@ -27,27 +27,28 @@ import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import {
   Filter,
 } from 'lucide-react';
-import { weatherAlertsData } from '@/lib/weather-alerts-data';
+import { weatherAlertsData, type WeatherAlert } from '@/lib/weather-alerts-data';
 import { cn } from '@/lib/utils';
 
+// Updated severityConfig to use theme variables for better consistency
 const severityConfig = {
   Low: {
     label: 'Low',
     color: 'hsl(var(--chart-1))',
-    className: 'border-blue-500/50 bg-blue-500/10 text-blue-700 dark:text-blue-300',
-    iconColor: 'text-blue-500',
+    className: 'border-primary/50 bg-primary/10 text-primary',
+    iconColor: 'text-primary',
   },
   Medium: {
     label: 'Medium',
     color: 'hsl(var(--chart-4))',
-    className: 'border-yellow-500/50 bg-yellow-500/10 text-yellow-700 dark:text-yellow-300',
-    iconColor: 'text-yellow-500',
+    className: 'border-accent/50 bg-accent/10 text-accent-foreground',
+    iconColor: 'text-accent',
   },
   High: {
     label: 'High',
     color: 'hsl(var(--chart-2))',
-    className: 'border-orange-500/50 bg-orange-500/10 text-orange-700 dark:text-orange-300',
-    iconColor: 'text-orange-500',
+    className: 'border-chart-2/50 bg-chart-2/10 text-chart-2',
+    iconColor: 'text-chart-2',
   },
   Critical: {
     label: 'Critical',
@@ -61,6 +62,21 @@ const severityConfig = {
         iconColor: string;
     }
 };
+
+// Helper function to map severity to a specific Badge variant
+const getSeverityBadgeVariant = (severity: WeatherAlert['severity']): BadgeProps['variant'] => {
+    switch (severity) {
+        case 'Critical':
+        case 'High':
+            return 'destructive';
+        case 'Medium':
+            return 'secondary';
+        case 'Low':
+            return 'default';
+        default:
+            return 'outline';
+    }
+}
 
 const allCrops = [...new Set(weatherAlertsData.flatMap(a => a.cropImpact))].filter(c => c !== 'All');
 const allRegions = [...new Set(weatherAlertsData.map(a => a.region))].filter(r => r !== 'All');
@@ -77,6 +93,9 @@ export default function WeatherAlertsPage() {
       const cropMatch =
         cropFilter === 'all' || alert.cropImpact.includes('All') || alert.cropImpact.includes(cropFilter as any);
       return regionMatch && cropMatch;
+    }).sort((a, b) => { // Sort alerts by severity
+        const severityOrder = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+        return (severityOrder[b.severity] || 0) - (severityOrder[a.severity] || 0);
     });
   }, [regionFilter, cropFilter]);
 
@@ -96,7 +115,7 @@ export default function WeatherAlertsPage() {
     <div className="grid gap-6">
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline tracking-wider">Weather & Risk Alerts</CardTitle>
+          <CardTitle className="font-headline tracking-wider">Weather &amp; Risk Alerts</CardTitle>
           <CardDescription>
             Real-time notifications for weather events and potential crop risks in the Davao region.
           </CardDescription>
@@ -191,11 +210,11 @@ export default function WeatherAlertsPage() {
                            <div className="flex-1">
                                <CardTitle className="text-base font-headline mb-1 flex justify-between items-center">
                                    {alert.title}
-                                   <Badge variant={alert.severity === 'Critical' || alert.severity === 'High' ? 'destructive' : 'secondary'}>
+                                   <Badge variant={getSeverityBadgeVariant(alert.severity)}>
                                         {alert.severity}
                                    </Badge>
                                </CardTitle>
-                               <CardDescription className="text-foreground/80 text-sm">
+                               <CardDescription className="text-current/80 text-sm">
                                    {alert.description}
                                </CardDescription>
                                <div className="mt-3 text-xs text-muted-foreground flex items-center justify-between">
