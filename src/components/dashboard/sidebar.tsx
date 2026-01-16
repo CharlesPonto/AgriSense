@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart, LayoutDashboard, Leaf, ScanLine, Bell, ClipboardList, Store, Settings } from 'lucide-react';
+import { BarChart, LayoutDashboard, Leaf, ScanLine, Bell, ClipboardList, Settings } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +20,6 @@ const mainMenuItems = [
   { href: '/dashboard/scan', label: 'Crop Scan', icon: ScanLine },
   { href: '/dashboard/log', label: 'Farm Activity Log', icon: ClipboardList },
   { href: '/dashboard/forecast', label: 'Yield Forecast', icon: BarChart },
-  { href: '/dashboard/marketplace', label: 'Marketplace', icon: Store },
 ];
 
 const settingsMenuItem = { href: '/dashboard/settings', label: 'Settings', icon: Settings };

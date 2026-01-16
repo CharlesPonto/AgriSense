@@ -21,7 +21,6 @@ const pathToTitle: { [key: string]: string } = {
   '/dashboard/scan': 'Crop Scan & Diagnosis',
   '/dashboard/log': 'Farm Activity Log',
   '/dashboard/forecast': 'Yield Forecast',
-  '/dashboard/marketplace': 'Marketplace',
   '/dashboard/settings': 'Settings',
 };
 
