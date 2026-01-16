@@ -100,10 +100,14 @@ const resourceChartConfig = {
 
 
 export default function ReportsPage() {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 0, 1),
-    to: new Date(),
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>();
+
+  React.useEffect(() => {
+    setDate({
+      from: new Date(2024, 0, 1),
+      to: new Date(),
+    });
+  }, []);
 
   const yieldSummary = React.useMemo(() => {
     const summary: { [key: string]: { predictedYield: number, expectedLosses: number } } = {};
