@@ -2,16 +2,14 @@
 
 import { useState, useRef, type ChangeEvent } from 'react';
 import Image from 'next/image';
-import { Upload, Leaf, BrainCircuit, Syringe } from 'lucide-react';
+import { Upload, Leaf, BrainCircuit, Syringe, Sparkles } from 'lucide-react';
 import { aiDiagnosisFromScan, type AiDiagnosisFromScanOutput } from '@/ai/flows/ai-diagnosis-from-scan';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -98,12 +96,10 @@ export default function CropScanPage() {
       setIsLoading(false);
     }
   };
-  
-  const placeholderImage = PlaceHolderImages.find(p => p.id === 'crop-scan-placeholder');
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-      <Card>
+      <Card className="lg:sticky top-6">
         <CardHeader>
           <CardTitle className="font-headline">Crop Scan & Diagnosis</CardTitle>
           <CardDescription>Select crop, upload an image, and provide data for an AI-powered diagnosis.</CardDescription>
@@ -126,14 +122,14 @@ export default function CropScanPage() {
               </Select>
           </div>
           <div 
-            className="border-2 border-dashed border-muted-foreground/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors relative overflow-hidden"
+            className="border-2 border-dashed border-muted-foreground/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors relative overflow-hidden group"
             onClick={() => fileInputRef.current?.click()}
           >
             {previewUrl ? (
               <Image src={previewUrl} alt="Crop scan preview" fill className="object-contain" />
             ) : (
               <div className="flex flex-col items-center justify-center text-center p-4">
-                <Upload className="h-12 w-12 text-muted-foreground" />
+                <Upload className="h-12 w-12 text-muted-foreground transition-transform group-hover:scale-110" />
                 <p className="mt-2 text-sm text-muted-foreground">Click to upload or drag and drop</p>
                 <p className="text-xs text-muted-foreground">PNG, JPG, or WEBP</p>
               </div>
@@ -157,67 +153,72 @@ export default function CropScanPage() {
             />
           </div>
           <Button onClick={handleDiagnose} disabled={isLoading || !file || !cropType} className="w-full">
-            <Leaf className="mr-2 h-4 w-4" />
+            <Sparkles className="mr-2 h-4 w-4" />
             {isLoading ? 'Diagnosing...' : 'Get Diagnosis'}
           </Button>
         </CardContent>
       </Card>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">AI Diagnosis Report</CardTitle>
-          <CardDescription>Results will appear here after analysis.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading && <DiagnosisSkeleton />}
-          {result && (
-            <Accordion type="single" collapsible defaultValue="diagnosis" className="w-full">
-              <AccordionItem value="diagnosis">
-                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                  <div className="flex items-center justify-between w-full pr-2">
-                    <div className="flex items-center gap-2">
-                      <Leaf className="h-5 w-5 text-primary" />
-                      Diagnosis
-                    </div>
-                    {result.severityLevel && <Badge variant={getSeverityVariant(result.severityLevel)}>{result.severityLevel}</Badge>}
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-headline">AI Diagnosis Report</CardTitle>
+            <CardDescription>Results will appear here after analysis.</CardDescription>
+          </CardHeader>
+        </Card>
+        
+        {isLoading && <DiagnosisSkeleton />}
+
+        {result && (
+          <div className="space-y-6">
+            <Card className="border-primary/50">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className='flex items-center gap-2'>
+                    <Leaf className="h-5 w-5 text-primary" />
+                    Diagnosis
                   </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-base leading-relaxed pt-2 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
-                  {result.diagnosis}
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="reasoning">
-                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <BrainCircuit className="h-5 w-5 text-primary" />
-                    Reasoning
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-base leading-relaxed pt-2 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
-                  {result.reasoning}
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="treatment">
-                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Syringe className="h-5 w-5 text-primary" />
-                    Treatment & Prevention
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-base leading-relaxed pt-2 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
-                  {result.treatmentRecommendations}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          )}
-          {!isLoading && !result && (
-            <div className="text-center text-muted-foreground py-10">
-              <p>Your diagnosis report is pending.</p>
-              <p className="text-sm">Please select a crop and upload a scan.</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  <Badge variant={getSeverityVariant(result.severityLevel)}>{result.severityLevel} Severity</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-base leading-relaxed pt-0 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
+                <p>{result.diagnosis}</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BrainCircuit className="h-5 w-5 text-primary" />
+                  Reasoning
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-base leading-relaxed pt-0 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
+                 <p>{result.reasoning}</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Syringe className="h-5 w-5 text-primary" />
+                  Treatment & Prevention
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-base leading-relaxed pt-0 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
+                 <p>{result.treatmentRecommendations}</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        
+        {!isLoading && !result && (
+          <div className="text-center text-muted-foreground py-10">
+            <p>Your diagnosis report is pending.</p>
+            <p className="text-sm">Please select a crop and upload a scan.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

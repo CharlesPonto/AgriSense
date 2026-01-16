@@ -56,11 +56,11 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm bg-card/90 backdrop-blur-sm">
+    <Card className="w-full max-w-sm bg-background/80 backdrop-blur-md border border-primary/20">
       <CardHeader className="text-center">
-        <div className="flex justify-center items-center gap-2 mb-4">
-          <Leaf className="w-8 h-8 text-primary" />
-          <h1 className="text-3xl font-headline font-bold text-primary">AgriSense</h1>
+        <div className="flex justify-center items-center gap-3 mb-4">
+          <Leaf className="w-10 h-10 text-primary" />
+          <h1 className="text-4xl font-headline font-bold text-primary">AgriSense</h1>
         </div>
         <CardTitle className="text-2xl font-headline">Welcome</CardTitle>
         <CardDescription>Agricultural decision support for farmers in Davao.</CardDescription>

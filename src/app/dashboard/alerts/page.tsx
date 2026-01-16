@@ -9,7 +9,7 @@ const alerts = [
     time: '15m ago',
   },
   {
-    icon: <Droplets className="h-5 w-5 text-primary" />,
+    icon: <Droplets className="h-5 w-5 text-blue-500" />,
     title: 'Irrigation System Malfunction',
     description: 'Sensor in Sector B reports low water pressure.',
     time: '2h ago',
@@ -32,7 +32,7 @@ export default function AlertsPage() {
         <CardContent>
           <div className="space-y-4">
             {alerts.map((alert, index) => (
-              <div key={index} className="flex items-start gap-4 p-3 bg-card rounded-lg border shadow-sm">
+              <div key={index} className="flex items-start gap-4 p-4 bg-card rounded-lg border shadow-sm transition-all hover:shadow-md hover:border-primary/50">
                 <div className="mt-1">{alert.icon}</div>
                 <div className="flex-1">
                   <p className="font-semibold">{alert.title}</p>

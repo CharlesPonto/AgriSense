@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "login-background",
-      "description": "A lush green farm field under a warm sunset.",
-      "imageUrl": "https://images.unsplash.com/photo-1696441567908-6a04d49e1350?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmYXJtJTIwZmllbGR8ZW58MHx8fHwxNzY4NTcxOTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "farm field"
+      "description": "Lush green rice terraces in the Philippines under a bright sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1617953255938-3453b615651f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaGlsaXBwaW5lcyUyMGZhcm18ZW58MHx8fHwxNzE4NzgzNjMxfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "rice terraces"
     },
     {
       "id": "crop-scan-placeholder",
