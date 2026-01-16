@@ -37,7 +37,7 @@ AI Diagnosis: {{{diagnosis}}}
 Crop Type: {{{cropType}}}
 Environmental Conditions: {{{environmentalConditions}}}
 
-Provide the recommendations as a numbered list, followed by a detailed explanation of why each treatment is recommended.`,,
+Provide the recommendations as a numbered list, followed by a detailed explanation of why each treatment is recommended.`,
 });
 
 const treatmentRecommendationsFlow = ai.defineFlow(
