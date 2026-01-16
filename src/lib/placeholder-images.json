@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "login-background",
-      "description": "A beautiful banana plantation in Davao, Philippines, with rows of healthy banana trees under a clear blue sky.",
-      "imageUrl": "https://images.unsplash.com/photo-1598135824177-613359191632?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxiYW5hbmElMjBwbGFudGF0aW9uJTIwcGhpbGlwcGluZXN8ZW58MHx8fHwxNzE4ODIwNzU1fDA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "banana plantation"
+      "description": "Lush, green rice terraces in the Philippines, showcasing the beauty of the country's agriculture.",
+      "imageUrl": "https://images.unsplash.com/photo-1534448170215-82c6eda37b7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzEzNTR8MHwxfHNlYXJjaHwxfHxwaGlsaXBwaW5lcyUyMHJpY2UlMjB0ZXJyYWNlc3xlbnwwfHx8fDE2ODg1ODg1NDJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "rice terraces"
     },
     {
       "id": "crop-scan-placeholder",
