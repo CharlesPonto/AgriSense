@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -73,10 +73,14 @@ export default function DiseaseMapPage() {
   const [cropFilter, setCropFilter] = useState('all');
   const [diseaseFilter, setDiseaseFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(new Date().setDate(new Date().getDate() - 30)),
-    to: new Date(),
-  });
+  const [date, setDate] = useState<DateRange | undefined>(undefined);
+
+  useEffect(() => {
+    setDate({
+      from: new Date(new Date().setDate(new Date().getDate() - 30)),
+      to: new Date(),
+    });
+  }, []);
 
   const filteredHotspots = useMemo(() => {
     return diseaseHotspotData.filter(hotspot => {
