@@ -70,27 +70,43 @@ function Hotspot({ hotspot }: { hotspot: HotspotData }) {
 export default function DiseaseMapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
   
-  const [cropFilter, setCropFilter] = useState('all');
-  const [diseaseFilter, setDiseaseFilter] = useState('all');
-  const [severityFilter, setSeverityFilter] = useState('all');
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
+  // Staging state for filters
+  const [stagedCropFilter, setStagedCropFilter] = useState('all');
+  const [stagedDiseaseFilter, setStagedDiseaseFilter] = useState('all');
+  const [stagedSeverityFilter, setStagedSeverityFilter] = useState('all');
+  const [stagedDate, setStagedDate] = useState<DateRange | undefined>(undefined);
+
+  // Active state for filters
+  const [activeCropFilter, setActiveCropFilter] = useState('all');
+  const [activeDiseaseFilter, setActiveDiseaseFilter] = useState('all');
+  const [activeSeverityFilter, setActiveSeverityFilter] = useState('all');
+  const [activeDate, setActiveDate] = useState<DateRange | undefined>(undefined);
 
   useEffect(() => {
-    setDate({
+    const initialDateRange = {
       from: new Date(new Date().setDate(new Date().getDate() - 30)),
       to: new Date(),
-    });
+    };
+    setStagedDate(initialDateRange);
+    setActiveDate(initialDateRange);
   }, []);
+
+  const handleApplyFilters = () => {
+    setActiveCropFilter(stagedCropFilter);
+    setActiveDiseaseFilter(stagedDiseaseFilter);
+    setActiveSeverityFilter(stagedSeverityFilter);
+    setActiveDate(stagedDate);
+  };
 
   const filteredHotspots = useMemo(() => {
     return diseaseHotspotData.filter(hotspot => {
-        const cropMatch = cropFilter === 'all' || hotspot.crop === cropFilter;
-        const diseaseMatch = diseaseFilter === 'all' || hotspot.disease === diseaseFilter;
-        const severityMatch = severityFilter === 'all' || hotspot.severity === severityFilter;
+        const cropMatch = activeCropFilter === 'all' || hotspot.crop === activeCropFilter;
+        const diseaseMatch = activeDiseaseFilter === 'all' || hotspot.disease === activeDiseaseFilter;
+        const severityMatch = activeSeverityFilter === 'all' || hotspot.severity === activeSeverityFilter;
         
         const hotspotDate = new Date(hotspot.date);
-        const fromDate = date?.from ? new Date(date.from.setHours(0,0,0,0)) : null;
-        const toDate = date?.to ? new Date(date.to.setHours(23,59,59,999)) : null;
+        const fromDate = activeDate?.from ? new Date(activeDate.from.setHours(0,0,0,0)) : null;
+        const toDate = activeDate?.to ? new Date(activeDate.to.setHours(23,59,59,999)) : null;
 
         const dateMatch = fromDate && toDate
             ? hotspotDate >= fromDate && hotspotDate <= toDate
@@ -98,7 +114,7 @@ export default function DiseaseMapPage() {
 
         return cropMatch && diseaseMatch && severityMatch && dateMatch;
     });
-  }, [cropFilter, diseaseFilter, severityFilter, date]);
+  }, [activeCropFilter, activeDiseaseFilter, activeSeverityFilter, activeDate]);
 
   const uniqueCrops = [...new Set(diseaseHotspotData.map(h => h.crop))];
   const uniqueDiseases = [...new Set(diseaseHotspotData.map(h => h.disease))];
@@ -148,7 +164,7 @@ export default function DiseaseMapPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="crop-type">Crop Type</Label>
-                        <Select value={cropFilter} onValueChange={setCropFilter}>
+                        <Select value={stagedCropFilter} onValueChange={setStagedCropFilter}>
                             <SelectTrigger id="crop-type">
                                 <SelectValue placeholder="All Crops" />
                             </SelectTrigger>
@@ -160,7 +176,7 @@ export default function DiseaseMapPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="disease-type">Disease</Label>
-                        <Select value={diseaseFilter} onValueChange={setDiseaseFilter}>
+                        <Select value={stagedDiseaseFilter} onValueChange={setStagedDiseaseFilter}>
                             <SelectTrigger id="disease-type">
                                 <SelectValue placeholder="All Diseases" />
                             </SelectTrigger>
@@ -172,7 +188,7 @@ export default function DiseaseMapPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="severity-level">Severity</Label>
-                        <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                        <Select value={stagedSeverityFilter} onValueChange={setStagedSeverityFilter}>
                             <SelectTrigger id="severity-level">
                                 <SelectValue placeholder="All Levels" />
                             </SelectTrigger>
@@ -192,18 +208,18 @@ export default function DiseaseMapPage() {
                                 variant={'outline'}
                                 className={cn(
                                 'w-full justify-start text-left font-normal',
-                                !date && 'text-muted-foreground'
+                                !stagedDate && 'text-muted-foreground'
                                 )}
                             >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date?.from ? (
-                                date.to ? (
+                                {stagedDate?.from ? (
+                                stagedDate.to ? (
                                     <>
-                                    {format(date.from, 'LLL dd, y')} -{' '}
-                                    {format(date.to, 'LLL dd, y')}
+                                    {format(stagedDate.from, 'LLL dd, y')} -{' '}
+                                    {format(stagedDate.to, 'LLL dd, y')}
                                     </>
                                 ) : (
-                                    format(date.from, 'LLL dd, y')
+                                    format(stagedDate.from, 'LLL dd, y')
                                 )
                                 ) : (
                                 <span>Pick a date</span>
@@ -214,14 +230,15 @@ export default function DiseaseMapPage() {
                             <Calendar
                                 initialFocus
                                 mode="range"
-                                defaultMonth={date?.from}
-                                selected={date}
-                                onSelect={setDate}
+                                defaultMonth={stagedDate?.from}
+                                selected={stagedDate}
+                                onSelect={setStagedDate}
                                 numberOfMonths={2}
                             />
                             </PopoverContent>
                         </Popover>
                     </div>
+                    <Button className="w-full" onClick={handleApplyFilters}>Apply Filters</Button>
                 </CardContent>
             </Card>
 
