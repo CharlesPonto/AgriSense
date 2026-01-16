@@ -46,12 +46,12 @@ function Hotspot({size, crop, disease, severity}: {size: 'sm' | 'md' | 'lg', cro
             </div>
 
             <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 bg-card border rounded-lg shadow-xl p-3 text-card-foreground opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                <p className="font-bold text-sm flex items-center gap-1"><Pin className="w-3 h-3"/> Panabo City</p>
+                <div className="font-bold text-sm flex items-center gap-1"><Pin className="w-3 h-3"/> Panabo City</div>
                 <div className="text-xs space-y-1 mt-2">
-                    <p className="flex items-center gap-1.5"><Grape className="w-3 h-3 text-primary"/> Crop: {crop}</p>
-                    <p className="flex items-center gap-1.5"><Bug className="w-3 h-3 text-destructive"/> Disease: {disease}</p>
-                    <p className="flex items-center gap-1.5">Severity: {severityBadge[severity]}</p>
-                    <p>Farms affected: {size === 'lg' ? 12 : size === 'md' ? 7 : 3}</p>
+                    <div className="flex items-center gap-1.5"><Grape className="w-3 h-3 text-primary"/> Crop: {crop}</div>
+                    <div className="flex items-center gap-1.5"><Bug className="w-3 h-3 text-destructive"/> Disease: {disease}</div>
+                    <div className="flex items-center gap-1.5">Severity: &nbsp; {severityBadge[severity]}</div>
+                    <div>Farms affected: {size === 'lg' ? 12 : size === 'md' ? 7 : 3}</div>
                 </div>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-card border-r border-b rotate-45" />
             </div>
