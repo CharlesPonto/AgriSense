@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "login-background",
-      "description": "A vibrant green pomelo farm in Davao, representing the region's rich agriculture.",
-      "imageUrl": "https://images.unsplash.com/photo-1597916819322-c3503a97a064?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXZhbyUyMHBvbWVsbyUyMGZhcm18ZW58MHx8fHwxNzE3Nzg0Mjk3fDA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "davao farm"
+      "description": "A beautiful landscape of a farm in the Davao region at sunrise, highlighting the area's agricultural richness.",
+      "imageUrl": "https://images.unsplash.com/photo-1620452184022-5a092b39ab42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhZ3JpY3VsdHVyZSUyMGRhdmFvfGVufDB8fHx8MTcyMTM0OTI1MHww&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "davao agriculture"
     },
     {
       "id": "crop-scan-placeholder",
