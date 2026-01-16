@@ -53,6 +53,7 @@ import { cn } from '@/lib/utils';
 import { forecastData } from '@/lib/forecast-data';
 import { resourceData } from '@/lib/resource-data';
 import { farmerData } from '@/lib/farmer-data';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for disease trends
 const diseaseData = [
@@ -101,13 +102,23 @@ const resourceChartConfig = {
 
 export default function ReportsPage() {
   const [date, setDate] = React.useState<DateRange | undefined>();
+  const { toast } = useToast();
 
   React.useEffect(() => {
+    const fromDate = new Date();
+    fromDate.setDate(new Date().getDate() - 180);
     setDate({
-      from: new Date(2024, 0, 1),
+      from: fromDate,
       to: new Date(),
     });
   }, []);
+
+  const handleExport = () => {
+    toast({
+        title: 'Exporting Report',
+        description: 'A CSV file is being generated. (This is a demo).',
+    });
+  };
 
   const yieldSummary = React.useMemo(() => {
     const summary: { [key: string]: { predictedYield: number, expectedLosses: number } } = {};
@@ -174,7 +185,7 @@ export default function ReportsPage() {
                         />
                         </PopoverContent>
                     </Popover>
-                    <Button>
+                    <Button onClick={handleExport}>
                         <Download className="mr-2 h-4 w-4" />
                         Export
                     </Button>

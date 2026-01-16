@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import { farmerData, type Farmer } from '@/lib/farmer-data';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 type SortKey = keyof Farmer | '';
 type SortDirection = 'asc' | 'desc';
@@ -70,6 +71,7 @@ export default function FarmerDataPage() {
   const [riskFilters, setRiskFilters] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const { toast } = useToast();
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -122,6 +124,20 @@ export default function FarmerDataPage() {
 
     return data;
   }, [searchTerm, cropFilters, riskFilters, sortKey, sortDirection]);
+
+  const handleAddFarmer = () => {
+    toast({
+        title: 'Add Farmer',
+        description: 'This would open a form to add a new farmer. (This is a demo).',
+    });
+  };
+
+  const handleViewFarmer = (name: string) => {
+    toast({
+        title: `Viewing ${name}`,
+        description: `This would navigate to the farmer's detailed profile page. (This is a demo).`,
+    });
+  };
 
   const SortableHeader = ({ tkey, label }: { tkey: SortKey; label: string }) => (
     <TableHead>
@@ -197,7 +213,7 @@ export default function FarmerDataPage() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-               <Button>
+               <Button onClick={handleAddFarmer}>
                 <UserPlus className="mr-2 h-4 w-4"/>
                 Add Farmer
             </Button>
@@ -242,7 +258,7 @@ export default function FarmerDataPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                       <Button variant="ghost" size="sm">View</Button>
+                       <Button variant="ghost" size="sm" onClick={() => handleViewFarmer(farmer.name)}>View</Button>
                     </TableCell>
                   </TableRow>
                 ))}

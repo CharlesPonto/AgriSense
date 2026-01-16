@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ import { Flame, SlidersHorizontal, Layers, Info, Pin, Bug, Leaf, BarChart } from
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 // A component to represent a single hotspot on the heatmap
 function HeatmapHotspot({
@@ -86,6 +88,14 @@ function HeatmapHotspot({
 
 export default function OutbreakHeatmapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
+  const { toast } = useToast();
+
+  const handleApplyFilters = () => {
+    toast({
+        title: 'Filters Applied',
+        description: 'The outbreak heatmap has been updated. (This is a demo).',
+    });
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
@@ -128,7 +138,7 @@ export default function OutbreakHeatmapPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="outbreak-type">Outbreak Type</Label>
-                        <Select>
+                        <Select defaultValue="all">
                             <SelectTrigger id="outbreak-type">
                                 <SelectValue placeholder="All Outbreaks" />
                             </SelectTrigger>
@@ -141,7 +151,7 @@ export default function OutbreakHeatmapPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="crop-type">Crop Affected</Label>
-                        <Select>
+                        <Select defaultValue="all">
                             <SelectTrigger id="crop-type">
                                 <SelectValue placeholder="All Crops" />
                             </SelectTrigger>
@@ -155,9 +165,9 @@ export default function OutbreakHeatmapPage() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="date-range">Date Range</Label>
-                        <Input id="date-range" type="text" placeholder="Last 7 days" />
+                        <Input id="date-range" type="text" placeholder="Last 7 days" defaultValue="Last 7 days" />
                     </div>
-                    <Button className="w-full">Apply Filters</Button>
+                    <Button className="w-full" onClick={handleApplyFilters}>Apply Filters</Button>
                 </CardContent>
             </Card>
 

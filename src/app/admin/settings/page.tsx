@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -10,8 +12,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { User, Bell, Shield } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
+  const { toast } = useToast();
+
+  const handleSave = (feature: string) => {
+    toast({
+      title: 'Settings Saved',
+      description: `Your ${feature} settings have been updated. (This is a demo).`,
+    });
+  };
+
   return (
     <div className="grid gap-6">
       <Card>
@@ -41,7 +53,7 @@ export default function SettingsPage() {
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" type="email" defaultValue="admin@gmail.com" />
             </div>
-            <Button>Save Profile</Button>
+            <Button onClick={() => handleSave('profile')}>Save Profile</Button>
           </CardContent>
         </Card>
 
@@ -66,7 +78,7 @@ export default function SettingsPage() {
               <Label htmlFor="confirm-password">Confirm New Password</Label>
               <Input id="confirm-password" type="password" />
             </div>
-            <Button>Change Password</Button>
+            <Button onClick={() => handleSave('password')}>Change Password</Button>
           </CardContent>
         </Card>
       </div>
@@ -100,7 +112,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch id="risk-alerts" />
             </div>
-             <Button>Save Notifications</Button>
+             <Button onClick={() => handleSave('notification')}>Save Notifications</Button>
         </CardContent>
       </Card>
       

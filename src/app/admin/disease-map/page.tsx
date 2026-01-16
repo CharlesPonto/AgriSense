@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { useFirestore, useCollection } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 // A component to represent a single hotspot on the map
 function Hotspot({ hotspot }: { hotspot: HotspotData }) {
@@ -73,6 +74,10 @@ function Hotspot({ hotspot }: { hotspot: HotspotData }) {
 export default function DiseaseMapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
   const firestore = useFirestore();
+  const { toast } = useToast();
+
+  const [weatherLayer, setWeatherLayer] = useState(false);
+  const [riskLayer, setRiskLayer] = useState(true);
 
   // Pending filters from UI controls
   const [pendingCropFilter, setPendingCropFilter] = useState('all');
@@ -89,8 +94,10 @@ export default function DiseaseMapPage() {
   });
 
   useEffect(() => {
+    const fromDate = new Date();
+    fromDate.setDate(new Date().getDate() - 30);
     const initialDateRange = {
-      from: new Date(new Date().setDate(new Date().getDate() - 30)),
+      from: fromDate,
       to: new Date(),
     };
     setPendingDate(initialDateRange);
@@ -131,6 +138,17 @@ export default function DiseaseMapPage() {
       disease: pendingDiseaseFilter,
       severity: pendingSeverityFilter,
       date: pendingDate,
+    });
+    toast({
+        title: 'Filters Applied',
+        description: 'The disease map has been updated with your selections.',
+    });
+  };
+
+  const handleLayerToggle = (layerName: string, enabled: boolean) => {
+    toast({
+      title: `${layerName} Layer`,
+      description: `The ${layerName.toLowerCase()} layer has been ${enabled ? 'enabled' : 'disabled'}. (This is a demo)`,
     });
   };
 
@@ -281,11 +299,25 @@ export default function DiseaseMapPage() {
                 <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                         <Label htmlFor="weather-layer" className="flex items-center gap-2">Weather Patterns</Label>
-                        <Switch id="weather-layer" />
+                        <Switch 
+                          id="weather-layer" 
+                          checked={weatherLayer} 
+                          onCheckedChange={(checked) => {
+                            setWeatherLayer(checked);
+                            handleLayerToggle('Weather Patterns', checked);
+                          }}
+                        />
                     </div>
                      <div className="flex items-center justify-between">
                         <Label htmlFor="risk-layer" className="flex items-center gap-2">Risk Alerts</Label>
-                        <Switch id="risk-layer" checked />
+                        <Switch 
+                          id="risk-layer" 
+                          checked={riskLayer}
+                          onCheckedChange={(checked) => {
+                            setRiskLayer(checked);
+                            handleLayerToggle('Risk Alerts', checked);
+                          }}
+                        />
                     </div>
                 </CardContent>
             </Card>
