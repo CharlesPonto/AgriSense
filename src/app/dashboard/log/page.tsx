@@ -48,7 +48,7 @@ export default function FarmActivityLogPage() {
         </div>
       </div>
       
-      <div className="sticky top-6">
+      <div>
          <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
