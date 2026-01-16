@@ -1,4 +1,4 @@
-import { LucideIcon, Wind, Thermometer, CloudDrizzle, Zap, BrainCircuit } from 'lucide-react';
+import { LucideIcon, Wind, Thermometer, CloudDrizzle, BrainCircuit } from 'lucide-react';
 
 export type WeatherAlert = {
   id: string;
@@ -27,18 +27,6 @@ export const weatherAlertsData: WeatherAlert[] = [
         source: 'AI',
         recommendations:
         '1. Proactive Fungicide Application: Immediately apply a systemic fungicide (e.g., metalaxyl-based) to all Cacao fields in the high-risk zone.\n2. Increase Pruning & Sanitation: Remove any low-hanging branches and prune dense canopies to improve air circulation and reduce leaf wetness duration.\n3. Monitor Fields Closely: Increase scouting frequency to twice daily to spot and isolate any initial signs of infection.',
-    },
-    {
-        id: 'alert-004',
-        title: 'Lightning Storm Alert',
-        description: 'A severe thunderstorm with frequent lightning is approaching District 1. This poses a risk to farm workers and equipment.',
-        severity: 'Critical',
-        region: 'District 1',
-        cropImpact: ['All'],
-        timestamp: '30 minutes ago',
-        Icon: Zap,
-        source: 'Manual',
-        recommendations: '1. Cease all field operations immediately.\n2. Ensure all personnel take shelter in sturdy buildings away from tall trees or metal structures.\n3. Unplug sensitive electronic equipment to protect from power surges.',
     },
     {
         id: 'alert-001',
