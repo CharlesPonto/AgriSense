@@ -44,7 +44,9 @@ export function LoginForm() {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (values.email === 'user@gmail.com' && values.password === 'user123') {
+    if (values.email === 'admin@gmail.com' && values.password === 'admin123') {
+      router.push('/admin/dashboard');
+    } else if (values.email === 'user@gmail.com' && values.password === 'user123') {
       router.push('/dashboard');
     } else {
       setError("Invalid email or password. Please try again.");
@@ -60,8 +62,8 @@ export function LoginForm() {
           <Leaf className="w-8 h-8 text-primary" />
           <h1 className="text-3xl font-headline font-bold text-primary">AgriSense</h1>
         </div>
-        <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
-        <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+        <CardTitle className="text-2xl font-headline">Welcome</CardTitle>
+        <CardDescription>Enter your credentials to sign in.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
