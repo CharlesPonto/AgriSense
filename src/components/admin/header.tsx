@@ -17,7 +17,13 @@ import { Button } from '@/components/ui/button';
 
 const pathToTitle: { [key: string]: string } = {
   '/admin/dashboard': 'Admin Dashboard',
-  '/admin/resources': 'Resource Management',
+  '/admin/disease-map': 'Disease Map',
+  '/admin/forecast': 'Supply & Yield Forecast',
+  '/admin/farmers': 'Farmer Data Management',
+  '/admin/weather-alerts': 'Weather & Risk Alerts',
+  '/admin/outbreak-heatmap': 'Colony Outbreak Heatmap',
+  '/admin/reports': 'Reports & Analytics',
+  '/admin/settings': 'Settings',
 };
 
 export function AdminHeader() {

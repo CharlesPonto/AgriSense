@@ -2,7 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shield, LayoutDashboard, Package } from 'lucide-react';
+import { 
+  Shield, 
+  LayoutDashboard, 
+  Map, 
+  AreaChart, 
+  Users, 
+  AlertTriangle, 
+  Flame, 
+  FileText, 
+  Settings 
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -10,13 +20,21 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-const menuItems = [
+const mainMenuItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/resources', label: 'Resources', icon: Package },
+  { href: '/admin/disease-map', label: 'Disease Map', icon: Map },
+  { href: '/admin/forecast', label: 'Supply & Forecast', icon: AreaChart },
+  { href: '/admin/farmers', label: 'Farmer Data', icon: Users },
+  { href: '/admin/weather-alerts', label: 'Weather Alerts', icon: AlertTriangle },
+  { href: '/admin/outbreak-heatmap', label: 'Outbreak Heatmap', icon: Flame },
+  { href: '/admin/reports', label: 'Reports & Analytics', icon: FileText },
 ];
+
+const settingsMenuItem = { href: '/admin/settings', label: 'Settings', icon: Settings };
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -36,7 +54,7 @@ export function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {menuItems.map((item) => (
+          {mainMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
@@ -52,6 +70,23 @@ export function AdminSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
+      <div className="mt-auto p-2">
+        <SidebarMenu>
+          <SidebarSeparator className="my-1" />
+           <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith(settingsMenuItem.href)}
+                  tooltip={settingsMenuItem.label}
+                >
+                  <Link href={settingsMenuItem.href}>
+                    <settingsMenuItem.icon />
+                    <span>{settingsMenuItem.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
     </Sidebar>
   );
 }
