@@ -15,6 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Label } from '@/components/ui/label';
 import { Badge, type BadgeProps } from '@/components/ui/badge';
 import {
@@ -26,6 +32,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
 import {
   Filter,
+  BrainCircuit,
 } from 'lucide-react';
 import { weatherAlertsData, type WeatherAlert } from '@/lib/weather-alerts-data';
 import { cn } from '@/lib/utils';
@@ -80,11 +87,13 @@ const getSeverityBadgeVariant = (severity: WeatherAlert['severity']): BadgeProps
 
 const allCrops = [...new Set(weatherAlertsData.flatMap(a => a.cropImpact))].filter(c => c !== 'All');
 const allRegions = [...new Set(weatherAlertsData.map(a => a.region))].filter(r => r !== 'All');
+const allSeverities = ['Critical', 'High', 'Medium', 'Low'];
 
 
 export default function WeatherAlertsPage() {
   const [regionFilter, setRegionFilter] = useState('all');
   const [cropFilter, setCropFilter] = useState('all');
+  const [severityFilter, setSeverityFilter] = useState('all');
 
   const filteredAlerts = useMemo(() => {
     return weatherAlertsData.filter(alert => {
@@ -92,12 +101,14 @@ export default function WeatherAlertsPage() {
         regionFilter === 'all' || alert.region === 'All' || alert.region === regionFilter;
       const cropMatch =
         cropFilter === 'all' || alert.cropImpact.includes('All') || alert.cropImpact.includes(cropFilter as any);
-      return regionMatch && cropMatch;
+      const severityMatch = 
+        severityFilter === 'all' || alert.severity === severityFilter;
+      return regionMatch && cropMatch && severityMatch;
     }).sort((a, b) => { // Sort alerts by severity
         const severityOrder = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
         return (severityOrder[b.severity] || 0) - (severityOrder[a.severity] || 0);
     });
-  }, [regionFilter, cropFilter]);
+  }, [regionFilter, cropFilter, severityFilter]);
 
   const chartData = useMemo(() => {
     const counts = { Low: 0, Medium: 0, High: 0, Critical: 0 };
@@ -161,6 +172,20 @@ export default function WeatherAlertsPage() {
                             </SelectContent>
                         </Select>
                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="severity-filter">Severity</Label>
+                        <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                            <SelectTrigger id="severity-filter">
+                                <SelectValue placeholder="All Severities" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Severities</SelectItem>
+                                 {allSeverities.map(severity => (
+                                    <SelectItem key={severity} value={severity}>{severity}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -207,28 +232,41 @@ export default function WeatherAlertsPage() {
              {filteredAlerts.length > 0 ? (
                 filteredAlerts.map(alert => (
                     <Card key={alert.id} className={cn('overflow-hidden', severityConfig[alert.severity].className)}>
-                       <div className="flex items-start p-4 gap-4">
-                           <div className="mt-1">
-                                <alert.Icon className={cn('h-8 w-8', severityConfig[alert.severity].iconColor)} />
-                           </div>
-                           <div className="flex-1">
-                               <CardTitle className="text-base font-headline mb-1 flex justify-between items-center">
-                                   {alert.title}
-                                   <Badge variant={getSeverityBadgeVariant(alert.severity)}>
-                                        {alert.severity}
-                                   </Badge>
-                               </CardTitle>
-                               <CardDescription className="text-current/80 text-sm">
-                                   {alert.description}
-                               </CardDescription>
-                               <div className="mt-3 text-xs text-muted-foreground flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <strong>Region:</strong> {alert.region} | <strong>Impacted:</strong> {alert.cropImpact.join(', ')}
-                                    </div>
-                                    <span>{alert.timestamp}</span>
+                        <div className="p-4">
+                           <div className="flex items-start gap-4">
+                               <div className="mt-1">
+                                   <alert.Icon className={cn('h-8 w-8', severityConfig[alert.severity].iconColor)} />
+                               </div>
+                               <div className="flex-1">
+                                   <CardTitle className="text-base font-headline mb-1 flex justify-between items-center">
+                                       <span className="flex items-center gap-2">
+                                           {alert.source === 'AI' && <BrainCircuit className="h-5 w-5 text-primary" />}
+                                           {alert.title}
+                                       </span>
+                                       <Badge variant={getSeverityBadgeVariant(alert.severity)}>
+                                            {alert.severity}
+                                       </Badge>
+                                   </CardTitle>
+                                   <CardDescription className="text-current/80 text-sm">
+                                       {alert.description}
+                                   </CardDescription>
+                                   <div className="mt-3 text-xs text-muted-foreground flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <strong>Region:</strong> {alert.region} | <strong>Impacted:</strong> {alert.cropImpact.join(', ')}
+                                        </div>
+                                        <span>{alert.timestamp}</span>
+                                   </div>
                                </div>
                            </div>
-                       </div>
+                           <Accordion type="single" collapsible className="w-full mt-2">
+                                <AccordionItem value="item-1" className="border-b-0">
+                                <AccordionTrigger className="text-xs pt-2 pb-1 hover:no-underline justify-start gap-1 font-semibold text-current/90">View Recommendations</AccordionTrigger>
+                                <AccordionContent className="text-sm text-current/80 pt-2 whitespace-pre-wrap">
+                                    {alert.recommendations}
+                                </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
                     </Card>
                 ))
             ) : (
