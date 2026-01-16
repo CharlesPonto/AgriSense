@@ -92,7 +92,7 @@ export default function ResourceManagementPage() {
     <div className="grid gap-6">
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Resource Management</CardTitle>
+          <CardTitle className="font-headline tracking-wider">Resource Management</CardTitle>
           <CardDescription>
             Allocate and manage resources like pesticides and fertilizers for the Davao region.
           </CardDescription>
@@ -130,9 +130,9 @@ export default function ResourceManagementPage() {
                                     <TableCell>
                                         <Badge variant={getStatusVariant(resource.status)}>{resource.status}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="outline" size="sm" className="mr-2">Allocate</Button>
-                                        <Button variant="ghost" size="sm">Restock</Button>
+                                    <TableCell className="text-right space-x-2">
+                                        <Button variant="default" size="sm">Allocate</Button>
+                                        <Button variant="secondary" size="sm">Restock</Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -142,7 +142,7 @@ export default function ResourceManagementPage() {
             </Card>
         </div>
         <div>
-            <Card>
+            <Card className="sticky top-6">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <PackagePlus className="h-5 w-5" />

@@ -27,14 +27,14 @@ export type ForecastYieldInput = z.infer<typeof ForecastYieldInputSchema>;
 
 const ForecastYieldOutputSchema = z.object({
   predictedYield: z
-    .string()
-    .describe('The predicted yield for the crop, based on the current and historical data.'),
+    .number()
+    .describe('The predicted yield for the crop in tons per hectare.'),
   confidenceInterval: z
     .string()
-    .describe('A confidence interval for the predicted yield, indicating the range of possible yields.'),
+    .describe('A confidence interval for the predicted yield, indicating the range of possible yields (e.g., "+/- 2 tons").'),
   expectedLosses: z
-    .string()
-    .describe('Expected losses based on current conditions, weather, soil, and disease data.'),
+    .number()
+    .describe('Expected losses in tons per hectare based on current conditions, weather, soil, and disease data.'),
   factorsInfluencingYield: z
     .string()
     .describe(
@@ -58,7 +58,7 @@ const prompt = ai.definePrompt({
   output: {schema: ForecastYieldOutputSchema},
   prompt: `You are an expert agricultural consultant specializing in crop yield forecasting for farms in the Davao region.
 
-You will use current and historical data to predict the yield for a given crop. Provide a confidence interval, identify key influencing factors, estimate potential losses based on risks, and offer recommendations for improvement.
+You will use current and historical data to predict the yield for a given crop. Provide the predicted yield and expected losses as numbers (in tons per hectare). Also provide a confidence interval, identify key influencing factors, and offer recommendations for improvement.
 
 Crop Type: {{{cropType}}}
 Current Data: {{{currentData}}}
