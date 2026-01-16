@@ -15,8 +15,7 @@ const dashboardLinks = [
     title: 'Yield Forecast',
     description: 'Predict your next harvest.',
     icon: <BarChart className="w-8 h-8 text-primary" />,
-    value: '+15%
-',
+    value: '+15%',
   },
    {
     href: '/dashboard/alerts',
