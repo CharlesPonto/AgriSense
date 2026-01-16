@@ -1,17 +1,26 @@
+'use client';
+
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Map, SlidersHorizontal, Layers, Info, Pin, Grape, Bug } from 'lucide-react';
+import { Map, SlidersHorizontal, Layers, Info, Pin, Grape, Bug, CalendarIcon, ShieldQuestion } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { diseaseHotspotData, type HotspotData } from '@/lib/disease-hotspot-data';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 // A component to represent a single hotspot on the map
-function Hotspot({size, crop, disease, severity}: {size: 'sm' | 'md' | 'lg', crop: string, disease: string, severity: 'Low' | 'Medium' | 'High'}) {
+function Hotspot({ hotspot }: { hotspot: HotspotData }) {
+    const { size, crop, disease, severity, area, farmsAffected } = hotspot;
+
     const sizeClasses = {
         sm: 'w-8 h-8',
         md: 'w-12 h-12',
@@ -34,7 +43,6 @@ function Hotspot({size, crop, disease, severity}: {size: 'sm' | 'md' | 'lg', cro
         High: <Badge variant="destructive">{severity}</Badge>
     }
 
-
     return (
          <div className="relative group">
             <div className={cn(
@@ -46,12 +54,12 @@ function Hotspot({size, crop, disease, severity}: {size: 'sm' | 'md' | 'lg', cro
             </div>
 
             <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 bg-card border rounded-lg shadow-xl p-3 text-card-foreground opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                <div className="font-bold text-sm flex items-center gap-1"><Pin className="w-3 h-3"/> Panabo City</div>
+                <div className="font-bold text-sm flex items-center gap-1"><Pin className="w-3 h-3"/> {area}</div>
                 <div className="text-xs space-y-1 mt-2">
                     <div className="flex items-center gap-1.5"><Grape className="w-3 h-3 text-primary"/> Crop: {crop}</div>
                     <div className="flex items-center gap-1.5"><Bug className="w-3 h-3 text-destructive"/> Disease: {disease}</div>
                     <div className="flex items-center gap-1.5">Severity: &nbsp; {severityBadge[severity]}</div>
-                    <div>Farms affected: {size === 'lg' ? 12 : size === 'md' ? 7 : 3}</div>
+                    <div>Farms affected: {farmsAffected}</div>
                 </div>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-card border-r border-b rotate-45" />
             </div>
@@ -61,6 +69,35 @@ function Hotspot({size, crop, disease, severity}: {size: 'sm' | 'md' | 'lg', cro
 
 export default function DiseaseMapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
+  
+  const [cropFilter, setCropFilter] = useState('all');
+  const [diseaseFilter, setDiseaseFilter] = useState('all');
+  const [severityFilter, setSeverityFilter] = useState('all');
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date(),
+  });
+
+  const filteredHotspots = useMemo(() => {
+    return diseaseHotspotData.filter(hotspot => {
+        const cropMatch = cropFilter === 'all' || hotspot.crop === cropFilter;
+        const diseaseMatch = diseaseFilter === 'all' || hotspot.disease === diseaseFilter;
+        const severityMatch = severityFilter === 'all' || hotspot.severity === severityFilter;
+        
+        const hotspotDate = new Date(hotspot.date);
+        const fromDate = date?.from ? new Date(date.from.setHours(0,0,0,0)) : null;
+        const toDate = date?.to ? new Date(date.to.setHours(23,59,59,999)) : null;
+
+        const dateMatch = fromDate && toDate
+            ? hotspotDate >= fromDate && hotspotDate <= toDate
+            : true;
+
+        return cropMatch && diseaseMatch && severityMatch && dateMatch;
+    });
+  }, [cropFilter, diseaseFilter, severityFilter, date]);
+
+  const uniqueCrops = [...new Set(diseaseHotspotData.map(h => h.crop))];
+  const uniqueDiseases = [...new Set(diseaseHotspotData.map(h => h.disease))];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
@@ -71,7 +108,7 @@ export default function DiseaseMapPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-headline">
               <Map className="text-primary" />
-              Enhanced Disease Map
+              Real-Time Disease Map
             </CardTitle>
             <CardDescription>
               Interactive heatmap of disease outbreaks in the Davao region. Hover over hotspots for details.
@@ -81,15 +118,12 @@ export default function DiseaseMapPage() {
             {mapImage && (
               <div className="aspect-video w-full rounded-lg overflow-hidden relative border bg-muted flex items-center justify-center">
                 <Image src={mapImage.imageUrl} alt={mapImage.description} data-ai-hint={mapImage.imageHint} fill className="object-cover" />
-                {/* Mock Hotspots */}
-                <div className="absolute top-[30%] left-[40%]">
-                    <Hotspot size="lg" crop="Cacao" disease="Pod Rot" severity="High" />
-                </div>
-                 <div className="absolute top-[50%] left-[60%]">
-                    <Hotspot size="md" crop="Banana" disease="Fusarium Wilt" severity="Medium" />
-                </div>
-                 <div className="absolute top-[65%] left-[35%]">
-                    <Hotspot size="sm" crop="Durian" disease="Patch Canker" severity="Low" />
+                <div className="absolute inset-0">
+                    {filteredHotspots.map(hotspot => (
+                        <div key={hotspot.id} style={{ position: 'absolute', ...hotspot.position }}>
+                            <Hotspot hotspot={hotspot} />
+                        </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -110,38 +144,80 @@ export default function DiseaseMapPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="crop-type">Crop Type</Label>
-                        <Select>
+                        <Select value={cropFilter} onValueChange={setCropFilter}>
                             <SelectTrigger id="crop-type">
                                 <SelectValue placeholder="All Crops" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Crops</SelectItem>
-                                <SelectItem value="banana">Banana</SelectItem>
-                                <SelectItem value="cacao">Cacao</SelectItem>
-                                <SelectItem value="durian">Durian</SelectItem>
-                                <SelectItem value="corn">Corn</SelectItem>
+                                {uniqueCrops.map(crop => <SelectItem key={crop} value={crop}>{crop}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="disease-type">Disease</Label>
-                        <Select>
+                        <Select value={diseaseFilter} onValueChange={setDiseaseFilter}>
                             <SelectTrigger id="disease-type">
                                 <SelectValue placeholder="All Diseases" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Diseases</SelectItem>
-                                <SelectItem value="pod-rot">Pod Rot (Cacao)</SelectItem>
-                                <SelectItem value="fusarium-wilt">Fusarium Wilt (Banana)</SelectItem>
-                                <SelectItem value="patch-canker">Patch Canker (Durian)</SelectItem>
+                                {uniqueDiseases.map(disease => <SelectItem key={disease} value={disease}>{disease}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="severity-level">Severity</Label>
+                        <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                            <SelectTrigger id="severity-level">
+                                <SelectValue placeholder="All Levels" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Levels</SelectItem>
+                                <SelectItem value="Low">Low</SelectItem>
+                                <SelectItem value="Medium">Medium</SelectItem>
+                                <SelectItem value="High">High</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="date-range">Date Range</Label>
-                        <Input id="date-range" type="text" placeholder="Last 30 days" />
+                        <Label>Date Range</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <Button
+                                variant={'outline'}
+                                className={cn(
+                                'w-full justify-start text-left font-normal',
+                                !date && 'text-muted-foreground'
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date?.from ? (
+                                date.to ? (
+                                    <>
+                                    {format(date.from, 'LLL dd, y')} -{' '}
+                                    {format(date.to, 'LLL dd, y')}
+                                    </>
+                                ) : (
+                                    format(date.from, 'LLL dd, y')
+                                )
+                                ) : (
+                                <span>Pick a date</span>
+                                )}
+                            </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="end">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={setDate}
+                                numberOfMonths={2}
+                            />
+                            </PopoverContent>
+                        </Popover>
                     </div>
-                    <Button className="w-full">Apply Filters</Button>
                 </CardContent>
             </Card>
 
