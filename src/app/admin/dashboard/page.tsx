@@ -4,9 +4,7 @@ import {
   BarChart3,
   Users,
   Package,
-  AlertCircle,
-  CloudDrizzle,
-  FileText,
+  ShieldAlert,
   Send,
   Megaphone,
   TrendingUp,
@@ -30,8 +28,18 @@ export default function AdminDashboardPage() {
             <Map className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3 Active Outbreaks</div>
-            <p className="text-xs text-muted-foreground">Monitoring 12 regions</p>
+            <div className="text-2xl font-bold">3 Hotspots</div>
+            <p className="text-xs text-muted-foreground">Trending infections by barangay.</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium font-headline">Outbreak Prediction</CardTitle>
+            <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-destructive">High Risk</div>
+            <p className="text-xs text-muted-foreground">AI-powered weather & symptom analysis.</p>
           </CardContent>
         </Card>
         <Card>
@@ -41,27 +49,17 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+5% Avg. Increase</div>
-            <p className="text-xs text-muted-foreground">Next 30 days forecast</p>
+            <p className="text-xs text-muted-foreground">Estimate harvest per area for planning.</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-headline">Farmer Data Management</CardTitle>
+            <CardTitle className="text-sm font-medium font-headline">Farmer Data & Logs</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,254 Farmers</div>
-            <p className="text-xs text-muted-foreground">+25 new this week</p>
-          </CardContent>
-        </Card>
-         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-headline">Outbreak Monitoring</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">High Alert</div>
-            <p className="text-xs text-muted-foreground">Corn rust in North Quadrant</p>
+            <p className="text-xs text-muted-foreground">Access profiles, crop data & logs.</p>
           </CardContent>
         </Card>
          <Card>
@@ -71,27 +69,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">78% Utilized</div>
-            <p className="text-xs text-muted-foreground">Pesticide stock levels optimal</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-headline">Weather & Risk Alerts</CardTitle>
-            <CloudDrizzle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">5 Active Alerts</div>
-            <p className="text-xs text-muted-foreground">Frost warning in Valley Region</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-headline">Farmer Activity Logs</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">342 New Logs</div>
-            <p className="text-xs text-muted-foreground">Today from 150 farmers</p>
+            <p className="text-xs text-muted-foreground">Plan and distribute supplies.</p>
           </CardContent>
         </Card>
         <Card>
@@ -101,7 +79,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3 Deployed</div>
-            <p className="text-xs text-muted-foreground">2 pending to hotspots</p>
+            <p className="text-xs text-muted-foreground">Deploy experts to hotspot areas.</p>
           </CardContent>
         </Card>
         <Card>
@@ -111,17 +89,17 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2 New Drafts</div>
-            <p className="text-xs text-muted-foreground">1 sent this week</p>
+            <p className="text-xs text-muted-foreground">Issue risk alerts to farmers.</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-headline">Market Interventions</CardTitle>
+            <CardTitle className="text-sm font-medium font-headline">Market & Harvest Planning</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">4 Plans Active</div>
-            <p className="text-xs text-muted-foreground">Upcoming wheat harvest plan</p>
+            <p className="text-xs text-muted-foreground">Monitor predicted harvest volumes.</p>
           </CardContent>
         </Card>
       </div>
