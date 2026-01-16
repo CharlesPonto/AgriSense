@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart, LayoutDashboard, Leaf, ScanLine, Bell } from 'lucide-react';
+import { BarChart, LayoutDashboard, Leaf, ScanLine, Bell, ClipboardList, Store, Settings } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -10,15 +10,21 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-const menuItems = [
+const mainMenuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/alerts', label: 'Alerts', icon: Bell },
+  { href: '/dashboard/alerts', label: 'Weather & Risk Alerts', icon: Bell },
   { href: '/dashboard/scan', label: 'Crop Scan', icon: ScanLine },
+  { href: '/dashboard/log', label: 'Farm Activity Log', icon: ClipboardList },
   { href: '/dashboard/forecast', label: 'Yield Forecast', icon: BarChart },
+  { href: '/dashboard/marketplace', label: 'Marketplace', icon: Store },
 ];
+
+const settingsMenuItem = { href: '/dashboard/settings', label: 'Settings', icon: Settings };
+
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -38,11 +44,11 @@ export function DashboardSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {menuItems.map((item) => (
+          {mainMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={item.label}
                 >
                   <Link href={item.href}>
@@ -54,6 +60,23 @@ export function DashboardSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
+       <div className="mt-auto p-2">
+        <SidebarMenu>
+          <SidebarSeparator className="my-1" />
+           <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith(settingsMenuItem.href)}
+                  tooltip={settingsMenuItem.label}
+                >
+                  <Link href={settingsMenuItem.href}>
+                    <settingsMenuItem.icon />
+                    <span>{settingsMenuItem.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
     </Sidebar>
   );
 }

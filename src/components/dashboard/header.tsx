@@ -17,14 +17,17 @@ import { Button } from '@/components/ui/button';
 
 const pathToTitle: { [key: string]: string } = {
   '/dashboard': 'Dashboard Overview',
-  '/dashboard/alerts': 'Alerts & Notifications',
+  '/dashboard/alerts': 'Weather & Risk Alerts',
   '/dashboard/scan': 'Crop Scan & Diagnosis',
+  '/dashboard/log': 'Farm Activity Log',
   '/dashboard/forecast': 'Yield Forecast',
+  '/dashboard/marketplace': 'Marketplace',
+  '/dashboard/settings': 'Settings',
 };
 
 export function DashboardHeader() {
   const pathname = usePathname();
-  const title = pathToTitle[pathname] || 'AgriSense';
+  const title = Object.entries(pathToTitle).find(([path]) => pathname.startsWith(path))?.[1] || 'AgriSense';
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -45,7 +48,9 @@ export function DashboardHeader() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>user@gmail.com</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <Link href="/dashboard/settings" passHref>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <Link href="/" passHref>
