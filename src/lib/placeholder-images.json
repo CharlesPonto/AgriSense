@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "login-background",
-      "description": "Lush, green rice terraces in the Philippines, showcasing the beauty of the country's agriculture.",
-      "imageUrl": "https://images.unsplash.com/photo-1534448170215-82c6eda37b7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNzEzNTR8MHwxfHNlYXJjaHwxfHxwaGlsaXBwaW5lcyUyMHJpY2UlMjB0ZXJyYWNlc3xlbnwwfHx8fDE2ODg1ODg1NDJ8MA&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "rice terraces"
+      "description": "A close-up of a vibrant green leaf with fresh water droplets, representing growth and nature.",
+      "imageUrl": "https://images.pexels.com/photos/28352656/pexels-photo-28352656.jpeg?cs=srgb&dl=pexels-vladimirsrajber-28352656.jpg&fm=jpg",
+      "imageHint": "leaf macro"
     },
     {
       "id": "crop-scan-placeholder",
