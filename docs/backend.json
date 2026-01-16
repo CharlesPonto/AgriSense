@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "Hotspot": {
+      "title": "Disease Hotspot",
+      "description": "Represents a disease or pest outbreak hotspot on the map.",
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "object",
+          "properties": {
+            "top": {
+              "type": "string"
+            },
+            "left": {
+              "type": "string"
+            }
+          },
+          "required": ["top", "left"]
+        },
+        "size": {
+          "type": "string",
+          "enum": ["sm", "md", "lg"]
+        },
+        "crop": {
+          "type": "string",
+          "enum": ["Cacao", "Banana", "Durian", "Corn", "Rust"]
+        },
+        "disease": {
+          "type": "string",
+          "enum": ["Pod Rot", "Fusarium Wilt", "Patch Canker", "Rust"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High"]
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of observation in YYYY-MM-DD format."
+        },
+        "area": {
+          "type": "string"
+        },
+        "farmsAffected": {
+          "type": "number"
+        }
+      },
+      "required": ["position", "size", "crop", "disease", "severity", "date", "area", "farmsAffected"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous"]
+  },
+  "firestore": {
+    "/hotspots/{hotspotId}": {
+      "schema": {
+        "$ref": "#/backend/entities/Hotspot"
+      },
+      "description": "Collection of disease hotspots."
+    }
+  }
+}

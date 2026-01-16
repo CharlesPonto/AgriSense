@@ -2,20 +2,23 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
+import { collection, query, where, Query } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Map, SlidersHorizontal, Layers, Info, Pin, Grape, Bug, CalendarIcon, ShieldQuestion } from 'lucide-react';
+import { Map, SlidersHorizontal, Layers, Info, Pin, Grape, Bug, CalendarIcon } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { diseaseHotspotData, type HotspotData } from '@/lib/disease-hotspot-data';
+import { type HotspotData } from '@/lib/disease-hotspot-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
+import { useFirestore, useCollection } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // A component to represent a single hotspot on the map
 function Hotspot({ hotspot }: { hotspot: HotspotData }) {
@@ -69,6 +72,7 @@ function Hotspot({ hotspot }: { hotspot: HotspotData }) {
 
 export default function DiseaseMapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
+  const firestore = useFirestore();
   
   // Staging state for filters
   const [stagedCropFilter, setStagedCropFilter] = useState('all');
@@ -97,27 +101,34 @@ export default function DiseaseMapPage() {
     setActiveSeverityFilter(stagedSeverityFilter);
     setActiveDate(stagedDate);
   };
+  
+  const hotspotsQuery = useMemo(() => {
+    if (!firestore) return null;
 
-  const filteredHotspots = useMemo(() => {
-    return diseaseHotspotData.filter(hotspot => {
-        const cropMatch = activeCropFilter === 'all' || hotspot.crop === activeCropFilter;
-        const diseaseMatch = activeDiseaseFilter === 'all' || hotspot.disease === activeDiseaseFilter;
-        const severityMatch = activeSeverityFilter === 'all' || hotspot.severity === activeSeverityFilter;
-        
-        const hotspotDate = new Date(hotspot.date);
-        const fromDate = activeDate?.from ? new Date(activeDate.from.setHours(0,0,0,0)) : null;
-        const toDate = activeDate?.to ? new Date(activeDate.to.setHours(23,59,59,999)) : null;
+    const constraints = [];
+    if (activeCropFilter !== 'all') {
+      constraints.push(where('crop', '==', activeCropFilter));
+    }
+    if (activeDiseaseFilter !== 'all') {
+      constraints.push(where('disease', '==', activeDiseaseFilter));
+    }
+    if (activeSeverityFilter !== 'all') {
+      constraints.push(where('severity', '==', activeSeverityFilter));
+    }
+    if (activeDate?.from) {
+      constraints.push(where('date', '>=', format(activeDate.from, 'yyyy-MM-dd')));
+    }
+    if (activeDate?.to) {
+      constraints.push(where('date', '<=', format(activeDate.to, 'yyyy-MM-dd')));
+    }
+    
+    return query(collection(firestore, 'hotspots'), ...constraints);
+  }, [firestore, activeCropFilter, activeDiseaseFilter, activeSeverityFilter, activeDate]);
 
-        const dateMatch = fromDate && toDate
-            ? hotspotDate >= fromDate && hotspotDate <= toDate
-            : true;
+  const { data: filteredHotspots, loading } = useCollection<HotspotData>(hotspotsQuery as Query<HotspotData>);
 
-        return cropMatch && diseaseMatch && severityMatch && dateMatch;
-    });
-  }, [activeCropFilter, activeDiseaseFilter, activeSeverityFilter, activeDate]);
-
-  const uniqueCrops = [...new Set(diseaseHotspotData.map(h => h.crop))];
-  const uniqueDiseases = [...new Set(diseaseHotspotData.map(h => h.disease))];
+  const uniqueCrops = ['Cacao', 'Banana', 'Durian', 'Corn'];
+  const uniqueDiseases = ['Pod Rot', 'Fusarium Wilt', 'Patch Canker', 'Rust'];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
@@ -139,7 +150,18 @@ export default function DiseaseMapPage() {
               <div className="aspect-video w-full rounded-lg overflow-hidden relative border bg-muted flex items-center justify-center">
                 <Image src={mapImage.imageUrl} alt={mapImage.description} data-ai-hint={mapImage.imageHint} fill className="object-cover" />
                 <div className="absolute inset-0">
-                    {filteredHotspots.map(hotspot => (
+                    {loading && (
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                        <div className="flex items-center gap-2">
+                           <Skeleton className="h-12 w-12 rounded-full" />
+                           <div className="space-y-2">
+                              <Skeleton className="h-4 w-[250px]" />
+                              <Skeleton className="h-4 w-[200px]" />
+                           </div>
+                        </div>
+                      </div>
+                    )}
+                    {filteredHotspots?.map(hotspot => (
                         <div key={hotspot.id} style={{ position: 'absolute', ...hotspot.position }}>
                             <Hotspot hotspot={hotspot} />
                         </div>
