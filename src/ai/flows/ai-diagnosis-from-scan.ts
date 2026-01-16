@@ -11,6 +11,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AiDiagnosisFromScanInputSchema = z.object({
+  cropType: z.string().describe('The type of crop being scanned (e.g., banana, cacao, corn, rice, durian).'),
   cropScanDataUri: z
     .string()
     .describe(
@@ -22,8 +23,9 @@ export type AiDiagnosisFromScanInput = z.infer<typeof AiDiagnosisFromScanInputSc
 
 const AiDiagnosisFromScanOutputSchema = z.object({
   diagnosis: z.string().describe('The diagnosis of potential diseases or issues.'),
+  severityLevel: z.string().describe('The severity level of the diagnosis (e.g., Low, Medium, High).'),
   reasoning: z.string().describe('The reasoning steps used to arrive at the diagnosis.'),
-  treatmentRecommendations: z.string().describe('Treatment recommendations for the diagnosed issues.'),
+  treatmentRecommendations: z.string().describe('Actionable recommendations for treatment and prevention.'),
 });
 export type AiDiagnosisFromScanOutput = z.infer<typeof AiDiagnosisFromScanOutputSchema>;
 
@@ -35,20 +37,15 @@ const prompt = ai.definePrompt({
   name: 'aiDiagnosisFromScanPrompt',
   input: {schema: AiDiagnosisFromScanInputSchema},
   output: {schema: AiDiagnosisFromScanOutputSchema},
-  prompt: `You are an AI assistant specialized in diagnosing crop diseases and issues based on uploaded scans and historical data.
+  prompt: `You are an AI assistant specialized in diagnosing crop diseases for farmers in the Davao region of the Philippines.
 
-  Analyze the provided crop scan and historical data to identify potential diseases or issues affecting the crop. Provide a detailed diagnosis, including the reasoning steps used to arrive at the diagnosis, and offer treatment recommendations.
+  Analyze the provided crop scan for a "{{{cropType}}}" crop, along with its historical data, to identify potential diseases or issues. Provide a detailed diagnosis, a severity level (Low, Medium, or High), the reasoning for your diagnosis, and actionable recommendations for treatment and prevention.
 
-  Crop Scan:
-  {{media url=cropScanDataUri}}
-
+  Crop: {{{cropType}}}
+  Scan: {{media url=cropScanDataUri}}
   Historical Data: {{{historicalData}}}
 
-  Respond with the following structure:
-
-  Diagnosis: [Diagnosis of potential diseases or issues]
-  Reasoning: [Reasoning steps used to arrive at the diagnosis]
-  Treatment Recommendations: [Treatment recommendations for the diagnosed issues]`,
+  Respond with the following structure.`,
 });
 
 const aiDiagnosisFromScanFlow = ai.defineFlow(

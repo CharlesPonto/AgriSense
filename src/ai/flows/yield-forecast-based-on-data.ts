@@ -32,6 +32,9 @@ const ForecastYieldOutputSchema = z.object({
   confidenceInterval: z
     .string()
     .describe('A confidence interval for the predicted yield, indicating the range of possible yields.'),
+  expectedLosses: z
+    .string()
+    .describe('Expected losses based on current conditions, weather, soil, and disease data.'),
   factorsInfluencingYield: z
     .string()
     .describe(
@@ -53,21 +56,15 @@ const prompt = ai.definePrompt({
   name: 'forecastYieldPrompt',
   input: {schema: ForecastYieldInputSchema},
   output: {schema: ForecastYieldOutputSchema},
-  prompt: `You are an expert agricultural consultant specializing in crop yield forecasting.
+  prompt: `You are an expert agricultural consultant specializing in crop yield forecasting for farms in the Davao region.
 
-You will use current and historical data to predict the yield for a given crop, providing a confidence interval, identifying key influencing factors, and offering recommendations for improvement.
+You will use current and historical data to predict the yield for a given crop. Provide a confidence interval, identify key influencing factors, estimate potential losses based on risks, and offer recommendations for improvement.
 
 Crop Type: {{{cropType}}}
 Current Data: {{{currentData}}}
 Historical Data: {{{historicalData}}}
 
-Based on this information, provide the predicted yield, a confidence interval, factors influencing the yield, and recommendations for improving the yield.
-
-Follow this schema:
-Predicted Yield: {{predictedYield}}
-Confidence Interval: {{confidenceInterval}}
-Factors Influencing Yield: {{factorsInfluencingYield}}
-Recommendations: {{recommendations}}`,
+Based on this information, provide the predicted yield, a confidence interval, expected losses, factors influencing the yield, and recommendations for improving the yield.`,
 });
 
 const forecastYieldFlow = ai.defineFlow(

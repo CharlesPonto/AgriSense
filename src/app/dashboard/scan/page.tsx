@@ -13,11 +13,29 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+
+const getSeverityVariant = (severity: string): "default" | "secondary" | "destructive" => {
+    switch (severity?.toLowerCase()) {
+        case 'high':
+            return 'destructive';
+        case 'medium':
+            return 'secondary';
+        case 'low':
+            return 'default';
+        default:
+            return 'default';
+    }
+}
+
 
 export default function CropScanPage() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [historicalData, setHistoricalData] = useState<string>("Crop: Corn (Zea mays)\nField Location: Sector 4B\nPlanting Date: 2024-04-15\nSoil Type: Loamy sand\nRecent Fertilizers: Nitrogen-rich formula applied 2 weeks ago.\nPrevious issues in this field: Minor fungal outbreak last season (resolved).");
+  const [cropType, setCropType] = useState<string>("");
+  const [historicalData, setHistoricalData] = useState<string>("Field Location: Sector 4B\nPlanting Date: 2024-04-15\nSoil Type: Loamy sand\nRecent Fertilizers: Nitrogen-rich formula applied 2 weeks ago.\nPrevious issues in this field: Minor fungal outbreak last season (resolved).");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AiDiagnosisFromScanOutput | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,7 +59,15 @@ export default function CropScanPage() {
         toast({
             variant: "destructive",
             title: "No file selected",
-            description: "Please upload a crop scan image to get a diagnosis.",
+            description: "Please upload a crop scan image.",
+        });
+        return;
+    }
+    if (!cropType) {
+        toast({
+            variant: "destructive",
+            title: "No crop type selected",
+            description: "Please select the type of crop.",
         });
         return;
     }
@@ -55,7 +81,7 @@ export default function CropScanPage() {
         if (!cropScanDataUri) {
             throw new Error("Could not read file.");
         }
-        const aiResult = await aiDiagnosisFromScan({ cropScanDataUri, historicalData });
+        const aiResult = await aiDiagnosisFromScan({ cropType, cropScanDataUri, historicalData });
         setResult(aiResult);
       };
       reader.onerror = () => {
@@ -79,10 +105,26 @@ export default function CropScanPage() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Upload Crop Scan</CardTitle>
-          <CardDescription>Upload an image of the affected crop and provide historical data for an AI-powered diagnosis.</CardDescription>
+          <CardTitle className="font-headline">Crop Scan & Diagnosis</CardTitle>
+          <CardDescription>Select crop, upload an image, and provide data for an AI-powered diagnosis.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="space-y-2">
+              <Label htmlFor="crop-type">Crop Type</Label>
+              <Select value={cropType} onValueChange={setCropType}>
+                  <SelectTrigger id="crop-type">
+                      <SelectValue placeholder="Select a crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="banana">Banana</SelectItem>
+                      <SelectItem value="cacao">Cacao</SelectItem>
+                      <SelectItem value="corn">Corn</SelectItem>
+                      <SelectItem value="rice">Rice</SelectItem>
+                      <SelectItem value="durian">Durian</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+              </Select>
+          </div>
           <div 
             className="border-2 border-dashed border-muted-foreground/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors relative overflow-hidden"
             onClick={() => fileInputRef.current?.click()}
@@ -105,16 +147,16 @@ export default function CropScanPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="historical-data">Historical Data</Label>
+            <Label htmlFor="historical-data">Historical & Environmental Data</Label>
             <Textarea
               id="historical-data"
               value={historicalData}
               onChange={(e) => setHistoricalData(e.target.value)}
               rows={6}
-              placeholder="e.g., Crop type, soil conditions, recent weather..."
+              placeholder="e.g., Soil conditions, recent weather, previous issues..."
             />
           </div>
-          <Button onClick={handleDiagnose} disabled={isLoading || !file} className="w-full">
+          <Button onClick={handleDiagnose} disabled={isLoading || !file || !cropType} className="w-full">
             <Leaf className="mr-2 h-4 w-4" />
             {isLoading ? 'Diagnosing...' : 'Get Diagnosis'}
           </Button>
@@ -132,9 +174,12 @@ export default function CropScanPage() {
             <Accordion type="single" collapsible defaultValue="diagnosis" className="w-full">
               <AccordionItem value="diagnosis">
                 <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                  <div className="flex items-center gap-2">
-                    <Leaf className="h-5 w-5 text-primary" />
-                    Diagnosis
+                  <div className="flex items-center justify-between w-full pr-2">
+                    <div className="flex items-center gap-2">
+                      <Leaf className="h-5 w-5 text-primary" />
+                      Diagnosis
+                    </div>
+                    {result.severityLevel && <Badge variant={getSeverityVariant(result.severityLevel)}>{result.severityLevel}</Badge>}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed pt-2 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
@@ -156,7 +201,7 @@ export default function CropScanPage() {
                 <AccordionTrigger className="text-lg font-semibold hover:no-underline">
                   <div className="flex items-center gap-2">
                     <Syringe className="h-5 w-5 text-primary" />
-                    Treatment Recommendations
+                    Treatment & Prevention
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed pt-2 prose-sm max-w-none dark:prose-invert prose-p:text-foreground">
@@ -168,7 +213,7 @@ export default function CropScanPage() {
           {!isLoading && !result && (
             <div className="text-center text-muted-foreground py-10">
               <p>Your diagnosis report is pending.</p>
-              <p className="text-sm">Please upload a scan and click "Get Diagnosis".</p>
+              <p className="text-sm">Please select a crop and upload a scan.</p>
             </div>
           )}
         </CardContent>

@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart, Info, Bot, Activity } from 'lucide-react';
+import { BarChart, Info, Bot, Activity, TrendingDown } from 'lucide-react';
 
 const formSchema = z.object({
   cropType: z.string().min(1, 'Crop type is required.'),
@@ -29,9 +29,9 @@ export default function YieldForecastPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cropType: 'Wheat',
-      currentData: 'Planting Density: 1.2 million seeds/acre. Current Growth Stage: Heading. Weather: Average temperature 75°F, 2 inches of rain in the last week. Soil Health: pH 6.8, good nitrogen levels.',
-      historicalData: 'Last 3 seasons average yield: 80 bushels/acre. Weather patterns were similar in previous years, with slightly less rainfall in the last season resulting in a 5% yield drop.',
+      cropType: 'Durian',
+      currentData: 'Variety: Puyat. Age: 5 years. Current Stage: Fruit development. Weather: Frequent rain, high humidity. Soil: Well-drained volcanic soil, pH 6.5.',
+      historicalData: 'Last year yield: 15 tons/hectare. No major disease outbreaks reported. Minor pest issues with fruit borers.',
     },
   });
 
@@ -70,7 +70,7 @@ export default function YieldForecastPage() {
                   <FormItem>
                     <FormLabel>Crop Type</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Corn, Soybeans, Wheat" {...field} />
+                      <Input placeholder="e.g., Banana, Cacao, Corn" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -120,16 +120,29 @@ export default function YieldForecastPage() {
           {isLoading && <ForecastSkeleton />}
           {result && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium font-headline">Predicted Yield</CardTitle>
-                  <BarChart className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-primary">{result.predictedYield}</div>
-                  <p className="text-xs text-muted-foreground">{result.confidenceInterval}</p>
-                </CardContent>
-              </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium font-headline">Predicted Yield</CardTitle>
+                    <BarChart className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-primary">{result.predictedYield}</div>
+                    <p className="text-xs text-muted-foreground">{result.confidenceInterval}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium font-headline">Expected Losses</CardTitle>
+                    <TrendingDown className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-destructive">{result.expectedLosses}</div>
+                    <p className="text-xs text-muted-foreground">Based on current risk factors.</p>
+                  </CardContent>
+                </Card>
+              </div>
+
               <div className="space-y-4">
                   <div>
                       <h3 className="font-semibold flex items-center gap-2"><Info className="h-5 w-5 text-accent" />Factors Influencing Yield</h3>
@@ -157,15 +170,26 @@ export default function YieldForecastPage() {
 function ForecastSkeleton() {
     return (
         <div className="space-y-6">
-            <Card>
-                <CardHeader className="pb-2">
-                    <Skeleton className="h-4 w-1/3" />
-                </CardHeader>
-                <CardContent>
-                    <Skeleton className="h-8 w-1/2" />
-                    <Skeleton className="h-4 w-2/3 mt-2" />
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <Skeleton className="h-4 w-2/3" />
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-8 w-1/2" />
+                        <Skeleton className="h-4 w-full mt-2" />
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <Skeleton className="h-4 w-2/3" />
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-8 w-1/2" />
+                        <Skeleton className="h-4 w-full mt-2" />
+                    </CardContent>
+                </Card>
+            </div>
             <div className="space-y-4 mt-6">
                 <Skeleton className="h-6 w-1/4" />
                 <Skeleton className="h-4 w-full mt-2" />
