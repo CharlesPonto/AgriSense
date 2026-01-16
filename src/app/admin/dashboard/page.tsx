@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
           <CardTitle className="font-headline">Admin Dashboard</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Welcome, Admin. Here's an overview of the platform's status.</p>
+          <p className="text-muted-foreground">Welcome, Admin. Monitor disease reports, forecast yields, and plan interventions for the Davao region.</p>
         </CardContent>
       </Card>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

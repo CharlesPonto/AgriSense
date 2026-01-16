@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'AgriSense',
-  description: 'AI-Powered Agricultural Intelligence',
+  title: 'AgriSense - Agricultural Support for Davao',
+  description: 'A mobile and web-based agricultural decision support system designed to help farmers in Davao detect crop diseases early, predict harvest yields, and receive weather- and risk-based alerts.',
 };
 
 export default function RootLayout({

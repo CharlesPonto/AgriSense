@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 
 const pathToTitle: { [key: string]: string } = {
   '/dashboard': 'Dashboard Overview',
+  '/dashboard/alerts': 'Alerts & Notifications',
   '/dashboard/scan': 'Crop Scan & Diagnosis',
   '/dashboard/forecast': 'Yield Forecast',
 };

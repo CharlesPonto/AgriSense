@@ -63,7 +63,7 @@ export function LoginForm() {
           <h1 className="text-3xl font-headline font-bold text-primary">AgriSense</h1>
         </div>
         <CardTitle className="text-2xl font-headline">Welcome</CardTitle>
-        <CardDescription>Enter your credentials to sign in.</CardDescription>
+        <CardDescription>Agricultural decision support for farmers in Davao.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

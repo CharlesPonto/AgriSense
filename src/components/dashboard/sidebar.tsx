@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart, LayoutDashboard, Leaf, ScanLine } from 'lucide-react';
+import { BarChart, LayoutDashboard, Leaf, ScanLine, Bell } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/alerts', label: 'Alerts', icon: Bell },
   { href: '/dashboard/scan', label: 'Crop Scan', icon: ScanLine },
   { href: '/dashboard/forecast', label: 'Yield Forecast', icon: BarChart },
 ];
