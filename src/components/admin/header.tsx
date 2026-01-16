@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 
 const pathToTitle: { [key: string]: string } = {
   '/admin/dashboard': 'Admin Dashboard',
+  '/admin/resources': 'Resource Management',
 };
 
 export function AdminHeader() {

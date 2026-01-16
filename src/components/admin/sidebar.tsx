@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shield, LayoutDashboard } from 'lucide-react';
+import { Shield, LayoutDashboard, Package } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/resources', label: 'Resources', icon: Package },
 ];
 
 export function AdminSidebar() {
