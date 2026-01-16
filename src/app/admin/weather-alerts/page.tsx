@@ -23,7 +23,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
 import {
   Filter,
 } from 'lucide-react';
@@ -191,7 +191,11 @@ export default function WeatherAlertsPage() {
                                     indicator="dot"
                                 />}
                             />
-                            <Bar dataKey="count" radius={4} />
+                            <Bar dataKey="count" radius={4}>
+                                {chartData.map((entry) => (
+                                    <Cell key={`cell-${entry.severity}`} fill={entry.fill} />
+                                ))}
+                            </Bar>
                         </BarChart>
                     </ChartContainer>
                 </CardContent>
