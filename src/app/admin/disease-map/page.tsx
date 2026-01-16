@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -75,44 +74,65 @@ export default function DiseaseMapPage() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'admin-disease-map');
   const firestore = useFirestore();
 
-  // Active state for filters
-  const [cropFilter, setCropFilter] = useState('all');
-  const [diseaseFilter, setDiseaseFilter] = useState('all');
-  const [severityFilter, setSeverityFilter] = useState('all');
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
+  // Pending filters from UI controls
+  const [pendingCropFilter, setPendingCropFilter] = useState('all');
+  const [pendingDiseaseFilter, setPendingDiseaseFilter] = useState('all');
+  const [pendingSeverityFilter, setPendingSeverityFilter] = useState('all');
+  const [pendingDate, setPendingDate] = useState<DateRange | undefined>(undefined);
+
+  // Applied filters for the query
+  const [appliedFilters, setAppliedFilters] = useState({
+    crop: 'all',
+    disease: 'all',
+    severity: 'all',
+    date: undefined as DateRange | undefined,
+  });
 
   useEffect(() => {
     const initialDateRange = {
       from: new Date(new Date().setDate(new Date().getDate() - 30)),
       to: new Date(),
     };
-    setDate(initialDateRange);
+    setPendingDate(initialDateRange);
+    // Initialize applied filters as well
+    setAppliedFilters(prev => ({ ...prev, date: initialDateRange }));
   }, []);
   
   const hotspotsQuery = useMemo(() => {
     if (!firestore) return null;
 
+    const { crop, disease, severity, date: appliedDate } = appliedFilters;
     const constraints = [];
-    if (cropFilter !== 'all') {
-      constraints.push(where('crop', '==', cropFilter));
+
+    if (crop !== 'all') {
+      constraints.push(where('crop', '==', crop));
     }
-    if (diseaseFilter !== 'all') {
-      constraints.push(where('disease', '==', diseaseFilter));
+    if (disease !== 'all') {
+      constraints.push(where('disease', '==', disease));
     }
-    if (severityFilter !== 'all') {
-      constraints.push(where('severity', '==', severityFilter));
+    if (severity !== 'all') {
+      constraints.push(where('severity', '==', severity));
     }
-    if (date?.from) {
-      constraints.push(where('date', '>=', format(date.from, 'yyyy-MM-dd')));
+    if (appliedDate?.from) {
+      constraints.push(where('date', '>=', format(appliedDate.from, 'yyyy-MM-dd')));
     }
-    if (date?.to) {
-      constraints.push(where('date', '<=', format(date.to, 'yyyy-MM-dd')));
+    if (appliedDate?.to) {
+      constraints.push(where('date', '<=', format(appliedDate.to, 'yyyy-MM-dd')));
     }
     
     return query(collection(firestore, 'hotspots'), ...constraints);
-  }, [firestore, cropFilter, diseaseFilter, severityFilter, date]);
+  }, [firestore, appliedFilters]);
 
   const { data: filteredHotspots, loading } = useCollection<HotspotData>(hotspotsQuery as Query<HotspotData>);
+
+  const handleApplyFilters = () => {
+    setAppliedFilters({
+      crop: pendingCropFilter,
+      disease: pendingDiseaseFilter,
+      severity: pendingSeverityFilter,
+      date: pendingDate,
+    });
+  };
 
   const uniqueCrops = ['Cacao', 'Banana', 'Durian', 'Corn'];
   const uniqueDiseases = ['Pod Rot', 'Fusarium Wilt', 'Patch Canker', 'Rust'];
@@ -173,7 +193,7 @@ export default function DiseaseMapPage() {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="crop-type">Crop Type</Label>
-                        <Select value={cropFilter} onValueChange={setCropFilter}>
+                        <Select value={pendingCropFilter} onValueChange={setPendingCropFilter}>
                             <SelectTrigger id="crop-type">
                                 <SelectValue placeholder="All Crops" />
                             </SelectTrigger>
@@ -185,7 +205,7 @@ export default function DiseaseMapPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="disease-type">Disease</Label>
-                        <Select value={diseaseFilter} onValueChange={setDiseaseFilter}>
+                        <Select value={pendingDiseaseFilter} onValueChange={setPendingDiseaseFilter}>
                             <SelectTrigger id="disease-type">
                                 <SelectValue placeholder="All Diseases" />
                             </SelectTrigger>
@@ -197,7 +217,7 @@ export default function DiseaseMapPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="severity-level">Severity</Label>
-                        <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                        <Select value={pendingSeverityFilter} onValueChange={setPendingSeverityFilter}>
                             <SelectTrigger id="severity-level">
                                 <SelectValue placeholder="All Levels" />
                             </SelectTrigger>
@@ -217,18 +237,18 @@ export default function DiseaseMapPage() {
                                 variant={'outline'}
                                 className={cn(
                                 'w-full justify-start text-left font-normal',
-                                !date && 'text-muted-foreground'
+                                !pendingDate && 'text-muted-foreground'
                                 )}
                             >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date?.from ? (
-                                date.to ? (
+                                {pendingDate?.from ? (
+                                pendingDate.to ? (
                                     <>
-                                    {format(date.from, 'LLL dd, y')} -{' '}
-                                    {format(date.to, 'LLL dd, y')}
+                                    {format(pendingDate.from, 'LLL dd, y')} -{' '}
+                                    {format(pendingDate.to, 'LLL dd, y')}
                                     </>
                                 ) : (
-                                    format(date.from, 'LLL dd, y')
+                                    format(pendingDate.from, 'LLL dd, y')
                                 )
                                 ) : (
                                 <span>Pick a date</span>
@@ -239,14 +259,15 @@ export default function DiseaseMapPage() {
                             <Calendar
                                 initialFocus
                                 mode="range"
-                                defaultMonth={date?.from}
-                                selected={date}
-                                onSelect={setDate}
+                                defaultMonth={pendingDate?.from}
+                                selected={pendingDate}
+                                onSelect={setPendingDate}
                                 numberOfMonths={2}
                             />
                             </PopoverContent>
                         </Popover>
                     </div>
+                    <Button onClick={handleApplyFilters} className="w-full">Apply Filters</Button>
                 </CardContent>
             </Card>
 
@@ -296,6 +317,3 @@ export default function DiseaseMapPage() {
     </div>
   );
 }
-
-
-    
