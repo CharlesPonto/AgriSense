@@ -38,26 +38,26 @@ const severityConfig = {
   Low: {
     label: 'Low',
     color: 'hsl(var(--chart-1))',
-    className: 'border-primary/50 bg-primary/5 text-primary-foreground',
+    className: 'border-primary/50 bg-primary/5',
     badgeVariant: 'default' as const,
   },
   Medium: {
     label: 'Medium',
     color: 'hsl(var(--chart-4))',
-    className: 'border-accent/50 bg-accent/10 text-accent-foreground',
+    className: 'border-accent/50 bg-accent/10',
     badgeVariant: 'secondary' as const,
   },
   High: {
     label: 'High',
     color: 'hsl(var(--chart-2))',
     className:
-      'border-destructive/50 bg-destructive/10 text-destructive-foreground',
+      'border-destructive/50 bg-destructive/10',
     badgeVariant: 'destructive' as const,
   },
   Critical: {
     label: 'Critical',
     color: 'hsl(var(--destructive))',
-    className: 'border-destructive bg-destructive/20 text-destructive-foreground',
+    className: 'border-destructive bg-destructive/20',
     badgeVariant: 'destructive' as const,
   },
 };
@@ -103,7 +103,7 @@ export default function WeatherAlertsPage() {
   }, [filteredAlerts]);
 
   const uniqueRegions = useMemo(
-    () => [...new Set(['All', ...weatherAlertsData.map((item) => item.region)])],
+    () => [...new Set(['All', ...weatherAlertsData.map((item) => item.region)])].filter((value, index, self) => self.indexOf(value) === index),
     []
   );
 
@@ -172,7 +172,7 @@ export default function WeatherAlertsPage() {
                 >
                   <CardHeader className="flex flex-row items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
-                        <alert.Icon className={cn("h-6 w-6 mt-1", severityConfig[alert.severity].className.includes('text-destructive') ? 'text-destructive' : 'text-primary')} />
+                        <alert.Icon className={cn("h-6 w-6 mt-1", severityConfig[alert.severity].badgeVariant === 'destructive' ? 'text-destructive' : 'text-primary')} />
                         <div>
                             <CardTitle className="text-lg font-headline">{alert.title}</CardTitle>
                             <CardDescription className="mt-1">
