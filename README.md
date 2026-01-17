@@ -1,4 +1,4 @@
-# 🌾 griSense  
+# 🌾 AgriSense  
 ### AI Crop Disease & Yield Prediction & Farmer Decision Support System  
 Built with **Next.js**, **Machine Learning**, and **Real-time Agriculture Insights**
 
