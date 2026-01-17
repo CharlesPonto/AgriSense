@@ -53,19 +53,20 @@ export default function CropScanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AiDiagnosisFromScanOutput | null>(null);
   
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean>();
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | undefined>(undefined);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    let stream: MediaStream;
     const getCameraPermission = async () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setHasCameraPermission(false);
         return;
       }
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setHasCameraPermission(true);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -73,10 +74,22 @@ export default function CropScanPage() {
       } catch (error) {
         console.error('Error accessing camera:', error);
         setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Camera Access Denied',
+          description: 'Please enable camera permissions in your browser settings to use this app.',
+        });
       }
     };
+    
     getCameraPermission();
-  }, []);
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [toast]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -178,26 +191,32 @@ export default function CropScanPage() {
               <TabsTrigger value="upload"><Upload className="mr-2"/> Upload File</TabsTrigger>
             </TabsList>
             <TabsContent value="camera" className="mt-4">
-               {hasCameraPermission === false && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Camera Access Denied</AlertTitle>
-                    <AlertDescription>
-                      Please enable camera permissions in your browser settings to use this feature.
-                    </AlertDescription>
-                  </Alert>
-                )}
-                {hasCameraPermission && (
-                  <div className="space-y-4">
-                     <div className="aspect-video w-full rounded-lg overflow-hidden bg-black border relative">
-                        <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-                         <div className="absolute inset-0 bg-black/20" />
-                     </div>
-                     <Button onClick={handleCapture} className="w-full">
-                        <Aperture className="mr-2"/> Capture Photo
-                     </Button>
-                  </div>
-                )}
+              {hasCameraPermission === undefined && (
+                <div className="space-y-4">
+                  <Skeleton className="aspect-video w-full rounded-lg" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              )}
+              {hasCameraPermission === false && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Camera Access Denied</AlertTitle>
+                  <AlertDescription>
+                    Please enable camera permissions in your browser settings to use this feature.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {hasCameraPermission === true && (
+                <div className="space-y-4">
+                   <div className="aspect-video w-full rounded-lg overflow-hidden bg-black border relative">
+                      <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                       <div className="absolute inset-0 bg-black/20" />
+                   </div>
+                   <Button onClick={handleCapture} className="w-full">
+                      <Aperture className="mr-2"/> Capture Photo
+                   </Button>
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="upload" className="mt-4">
               <div 
