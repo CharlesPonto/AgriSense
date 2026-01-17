@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "login-background",
-      "description": "A beautiful landscape of a farm in the Davao region at sunrise, highlighting the area's agricultural richness.",
-      "imageUrl": "https://images.unsplash.com/photo-1620452184022-5a092b39ab42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhZ3JpY3VsdHVyZSUyMGRhdmFvfGVufDB8fHx8MTcyMTM0OTI1MHww&ixlib=rb-4.0.3&q=80&w=1080",
-      "imageHint": "davao agriculture"
+      "description": "Lush green crops growing in a field under a clear blue sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1523741543314-8e4e6223867d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmaWVsZCUyMG9mJTIwY3JvcHN8ZW58MHx8fHwxNzI0MDQ1NTMwfDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "crops field"
     },
     {
       "id": "crop-scan-placeholder",
